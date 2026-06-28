@@ -21,5 +21,6 @@ bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/ins
 ### دستورات مدیریت ربات
 
 بررسی وضعیت ربات:
-`bash
+```bash
 sudo systemctl status pasargad_bot
+---
