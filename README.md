@@ -15,7 +15,7 @@
 ## 🛠 آموزش نصب سریع
 برای نصب ربات روی سرور (اوبونتو / دبیان)، نیازی به دانش فنی پیچیده نیست. فقط کافیست دستور زیر را کپی کرده و در ترمینال سرور خود اجرا کنید:
 
-`bash
+```bash
 bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh](https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh))
 
 مراحل راه‌اندازی پس از نصب:
