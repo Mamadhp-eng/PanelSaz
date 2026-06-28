@@ -17,4 +17,4 @@
 
 ```bash
 bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh](https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh))
----
+
