@@ -3,8 +3,7 @@
 # ==========================================
 # GitHub Auto-Installer Script
 # ==========================================
-# ⚠️ لینک دانلود مستقیم فایل باینری خود از گیت‌هاب را اینجا قرار دهید:
-BINARY_URL="https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/client_bot.py"
+BINARY_URL="https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/client_bot"
 
 VERSION="1.0.16"
 CREATOR="t.me/muhammad_hosein_pour"
@@ -34,7 +33,15 @@ function install_bot() {
     cd $BOT_DIR
     
     print_msg "Downloading Bot Core..."
+    # دانلود فایل و ذخیره آن
     wget -qO $BOT_FILE $BINARY_URL
+    
+    # بررسی اینکه آیا فایل واقعا دانلود شده و یک فایل متنی/HTML نیست
+    if grep -q "404: Not Found" $BOT_FILE; then
+        print_err "Error: Binary file not found on GitHub! Check the BINARY_URL."
+        exit 1
+    fi
+
     chmod +x $BOT_FILE
     
     while true; do
@@ -84,9 +91,7 @@ EOF"
     sudo systemctl start $SERVICE_NAME
 
     print_msg "Installation Complete! Go to your bot and send /start"
-    read -p "Press Enter to exit..."
-    exit 0
+    echo -e "\e[1;33m⚠️ Note: The bot will ask for a License Key upon first interaction.\e[0m"
 }
 
-# اگر فقط اسکریپت ران شد، یکراست بره نصب
 install_bot
