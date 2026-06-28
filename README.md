@@ -17,23 +17,3 @@
 
 ```bash
 bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh](https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh))
-##
-مراحل راه‌اندازی پس از نصب:
-​پس از اجرای دستور بالا، ربات از شما توکن تلگرام و آیدی عددی ادمین را درخواست می‌کند.
-​پس از وارد کردن اطلاعات، ربات به صورت خودکار در پس‌زمینه سیستم نصب و فعال می‌شود.
-​وارد تلگرام شده و به ربات خود پیام /start بدهید.
-​در این مرحله، ربات از شما درخواست کد لایسنس می‌کند. کد خریداری شده را ارسال کنید.
-​پس از تایید لایسنس، منوی مدیریت پنل برای شما فعال خواهد شد
-
-در صورتی که ربات نیاز به اپدیت یا ریستارت مجدد داشت از کد زیر استفاده کنید
-`sudo systemctl restart pasargad_bot
-بررسی وضعیت ربات
-`sudo systemctl status pasargad_bot
-خاموش کردن ربات
-`sudo systemctl stop pasargad_bot
-استارت کردن ربات
-`sudo systemctl start pasargad_bot
-بررسی لاگ های ربات
-`sudo journalctl -u pasargad_bot -f -n 50
-
-​Developed by MamadHp
