@@ -17,3 +17,17 @@
 
 ```bash
 bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh](https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh))
+---
+## بررسی وضعیت ربات
+```sudo systemctl status pasargad_bot
+---
+## خاموش کردن ربات
+```sudo systemctl stop pasargad_bot
+---
+## استارت کردن ربات
+```sudo systemctl start pasargad_bot
+---
+## بررسی لاگ های ربات
+
+```sudo journalctl -u pasargad_bot -f -n 50
+---
