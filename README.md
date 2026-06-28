@@ -17,7 +17,7 @@
 
 ```bash
 bash <(curl -Ls [https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh](https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh))
-
+##
 مراحل راه‌اندازی پس از نصب:
 ​پس از اجرای دستور بالا، ربات از شما توکن تلگرام و آیدی عددی ادمین را درخواست می‌کند.
 ​پس از وارد کردن اطلاعات، ربات به صورت خودکار در پس‌زمینه سیستم نصب و فعال می‌شود.
