@@ -4,7 +4,7 @@
 # GitHub Auto-Installer Script
 # ==========================================
 # ⚠️ لینک دانلود مستقیم فایل باینری خود از گیت‌هاب را اینجا قرار دهید:
-BINARY_URL="https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/client_bot"
+BINARY_URL="https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/client_bot.py"
 
 VERSION="1.0.16"
 CREATOR="t.me/muhammad_hosein_pour"
