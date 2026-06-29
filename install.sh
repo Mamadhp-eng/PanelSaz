@@ -36,15 +36,19 @@ function show_menu() {
     echo -e "${CYAN}=================================================${NC}"
     echo -e "  [1] 📥 Install New Bot"
     echo -e "  [2] 🔄 Update Bot (Latest Version)"
-    echo -e "  [3] 🗑 Uninstall Bot Service"
+    echo -e "  [3] ⏹️ Stop Bot Service"
+    echo -e "  [4] ▶️ Restart Bot Service"
+    echo -e "  [5] 🗑 Uninstall Bot Service"
     echo -e "  [0] ❌ Exit"
     echo -e "${CYAN}=================================================${NC}"
-    read -p "Please select an option [0-3]: " choice
+    read -p "Please select an option [0-5]: " choice
 
     case $choice in
         1) install_bot ;;
         2) update_bot ;;
-        3) uninstall_bot ;;
+        3) stop_bot ;;
+        4) restart_bot ;;
+        5) uninstall_bot ;;
         0) echo -e "${GREEN}Exiting installer. Goodbye!${NC}"; exit 0 ;;
         *) echo -e "${RED}Invalid option! Please try again.${NC}"; sleep 2; show_menu ;;
     esac
@@ -134,6 +138,28 @@ function update_bot() {
         echo -e "${RED}❌ Bot is not installed on this server! Please choose option [1] to install it first.${NC}"
     fi
     
+    echo ""
+    read -p "Press Enter to return to the main menu..."
+    show_menu
+}
+
+function stop_bot() {
+    clear
+    echo -e "${CYAN}--- Stopping Client Bot ---${NC}"
+    systemctl stop ${SERVICE_NAME} 2>/dev/null
+    echo -e "${GREEN}✅ Bot service has been stopped successfully.${NC}"
+    echo ""
+    read -p "Press Enter to return to the main menu..."
+    show_menu
+}
+
+function restart_bot() {
+    clear
+    echo -e "${CYAN}--- Restarting Client Bot ---${NC}"
+    systemctl restart ${SERVICE_NAME} 2>/dev/null
+    echo -e "${GREEN}✅ Bot service has been restarted successfully.${NC}"
+    echo -e "To view live logs, use the following command:"
+    echo -e "${CYAN}journalctl -u ${SERVICE_NAME} -f${NC}"
     echo ""
     read -p "Press Enter to return to the main menu..."
     show_menu
