@@ -1,157 +1,163 @@
 #!/bin/bash
 
 # ==========================================
-# GitHub Auto-Installer Script (Client Edition)
+# Colors for output
 # ==========================================
-BINARY_URL="https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/client_bot"
-
-VERSION="1.0.17"
-CREATOR="t.me/muhammad_hosein_pour"
-SERVICE_NAME="pasargad_bot"
-SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-BOT_DIR="/root/pasargad_panel"
-BOT_FILE="client_bot"
+GREEN="\033[1;32m"
+RED="\033[1;31m"
+YELLOW="\033[1;33m"
+CYAN="\033[1;36m"
+NC="\033[0m"
 
 # ==========================================
-# UI Functions
+# Variables
 # ==========================================
-function show_banner() {
+# Your exact GitHub raw URL
+REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
+WORK_DIR="/root/client_bot"
+SERVICE_NAME="client_bot"
+FILE_NAME="client_bot.py"
+
+# ==========================================
+# Check Root Privilege
+# ==========================================
+if [ "$EUID" -ne 0 ]; then
+  echo -e "${RED}❌ Error: Please run this script as root (sudo -i)${NC}"
+  exit 1
+fi
+
+# ==========================================
+# Main Menu
+# ==========================================
+function show_menu() {
     clear
-    echo -e "\e[1;36m====================================================\e[0m"
-    echo -e "\e[1;32m      Pasargad Panel Bot Ultimate Installer         \e[0m"
-    echo -e "\e[1;33m      Version: $VERSION                             \e[0m"
-    echo -e "\e[1;35m      Creator: $CREATOR                             \e[0m"
-    echo -e "\e[1;36m====================================================\e[0m"
-    echo ""
+    echo -e "${CYAN}=================================================${NC}"
+    echo -e "${GREEN}        🚀 PanelSaz Client Bot Installer 🚀      ${NC}"
+    echo -e "${CYAN}=================================================${NC}"
+    echo -e "  [1] 📥 Install New Bot"
+    echo -e "  [2] 🔄 Update Bot (Latest Version)"
+    echo -e "  [3] 🗑 Uninstall Bot Service"
+    echo -e "  [0] ❌ Exit"
+    echo -e "${CYAN}=================================================${NC}"
+    read -p "Please select an option [0-3]: " choice
+
+    case $choice in
+        1) install_bot ;;
+        2) update_bot ;;
+        3) uninstall_bot ;;
+        0) echo -e "${GREEN}Exiting installer. Goodbye!${NC}"; exit 0 ;;
+        *) echo -e "${RED}Invalid option! Please try again.${NC}"; sleep 2; show_menu ;;
+    esac
 }
 
-function print_msg() { echo -e "\e[1;32m[+] $1\e[0m"; }
-function print_err() { echo -e "\e[1;31m[-] $1\e[0m"; }
-
-# ==========================================
-# Core Functions
-# ==========================================
 function install_bot() {
-    show_banner
-    print_msg "Starting Installation..."
+    clear
+    echo -e "${CYAN}--- Installing Client Bot ---${NC}"
     
-    mkdir -p $BOT_DIR
-    cd $BOT_DIR
+    mkdir -p $WORK_DIR
+    cd $WORK_DIR
     
-    print_msg "Downloading Bot Core..."
-    wget -qO $BOT_FILE $BINARY_URL
+    echo -e "${YELLOW}Installing required system packages...${NC}"
+    apt update -y
+    apt install python3 python3-pip curl wget unzip sqlite3 -y
     
-    if grep -q "404: Not Found" $BOT_FILE; then
-        print_err "Error: Binary file not found on GitHub!"
-        exit 1
-    fi
-
-    chmod +x $BOT_FILE
+    echo -e "${YELLOW}Downloading bot files from GitHub...${NC}"
+    curl -Ls "$REPO_URL/$FILE_NAME" | sed 's/\r$//' > $FILE_NAME
     
-    while true; do
-        read -p "Enter your Telegram Bot Token (e.g. 123456:ABC-DEF): " BOT_TOKEN
-        if [[ $BOT_TOKEN =~ ^[0-9]+:[a-zA-Z0-9_-]+$ ]]; then break; else print_err "Invalid Token!"; fi
-    done
+    echo -e "${YELLOW}Installing Python dependencies...${NC}"
+    pip3 install pyTelegramBotAPI requests pyjwt cryptography --break-system-packages
 
-    while true; do
-        read -p "Enter your Numeric Telegram Admin ID (e.g. 123456789): " ADMIN_ID
-        if [[ $ADMIN_ID =~ ^[0-9]+$ ]]; then break; else print_err "Invalid ID!"; fi
-    done
-
-    print_msg "Generating config.json..."
-    cat <<EOF > config.json
-{
-    "bot_token": "$BOT_TOKEN",
-    "super_admin": $ADMIN_ID,
-    "panel_url": "",
-    "marzban_admin_username": "",
-    "marzban_admin_password": "",
-    "card_number": "",
-    "card_holder": "",
-    "auto_backup_hours": 0,
-    "license_key": ""
-}
-EOF
-
-    print_msg "Creating background service..."
-    sudo bash -c "cat <<EOF > $SERVICE_FILE
+    echo -e "${YELLOW}Creating background service (Systemd)...${NC}"
+    cat <<EOF > /etc/systemd/system/${SERVICE_NAME}.service
 [Unit]
-Description=Pasargad Telegram Bot
+Description=PanelSaz Client Bot
 After=network.target
 
 [Service]
 User=root
-WorkingDirectory=$BOT_DIR
-ExecStart=$BOT_DIR/$BOT_FILE
+WorkingDirectory=${WORK_DIR}
+ExecStart=/usr/bin/python3 ${WORK_DIR}/${FILE_NAME}
 Restart=always
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-EOF"
+EOF
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable $SERVICE_NAME
-    sudo systemctl start $SERVICE_NAME
-
-    print_msg "Installation Complete! Go to your bot and send /start"
-    echo -e "\e[1;33m⚠️ Note: The bot will ask for a License Key upon first interaction.\e[0m"
-    read -p "Press Enter to return to the menu..."
+    systemctl daemon-reload
+    systemctl enable ${SERVICE_NAME}
+    systemctl start ${SERVICE_NAME}
+    
+    echo -e "${GREEN}✅ Installation completed successfully!${NC}"
+    echo -e "To view live logs, use the following command:"
+    echo -e "${CYAN}journalctl -u ${SERVICE_NAME} -f${NC}"
+    echo ""
+    read -p "Press Enter to return to the main menu..."
+    show_menu
 }
 
-function stop_bot() {
-    sudo systemctl stop $SERVICE_NAME 2>/dev/null
-    print_msg "Bot stopped successfully."
-    read -p "Press Enter to return to the menu..."
-}
+function update_bot() {
+    clear
+    echo -e "${RED}=================================================${NC}"
+    echo -e "${YELLOW}              ⚠️ CRITICAL WARNING ⚠️             ${NC}"
+    echo -e "${CYAN}Please BACKUP your database and user data before updating!${NC}"
+    echo -e "If your bot has a backup feature, use it now via Telegram."
+    echo -e "${RED}=================================================${NC}"
+    
+    read -p "Have you backed up your data? Do you want to proceed with the update? (y/n): " confirm
+    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+        echo -e "${YELLOW}Update canceled. Returning to menu...${NC}"
+        sleep 2
+        show_menu
+        return
+    fi
 
-function restart_bot() {
-    sudo systemctl restart $SERVICE_NAME 2>/dev/null
-    print_msg "Bot restarted successfully."
-    read -p "Press Enter to return to the menu..."
+    echo -e "${CYAN}--- Updating Client Bot ---${NC}"
+    
+    if [ -d "$WORK_DIR" ]; then
+        cd $WORK_DIR
+        echo -e "${YELLOW}Stopping current bot service...${NC}"
+        systemctl stop ${SERVICE_NAME} 2>/dev/null
+        
+        echo -e "${YELLOW}Fetching latest code from GitHub...${NC}"
+        curl -Ls "$REPO_URL/$FILE_NAME" | sed 's/\r$//' > $FILE_NAME
+        
+        echo -e "${YELLOW}Checking and installing any new Python dependencies...${NC}"
+        pip3 install pyTelegramBotAPI requests pyjwt cryptography --break-system-packages
+
+        echo -e "${YELLOW}Restarting bot service...${NC}"
+        systemctl daemon-reload
+        systemctl start ${SERVICE_NAME}
+        
+        echo -e "${GREEN}✅ Bot updated successfully to the latest version! (Your database is safe)${NC}"
+    else
+        echo -e "${RED}❌ Bot is not installed on this server! Please choose option [1] to install it first.${NC}"
+    fi
+    
+    echo ""
+    read -p "Press Enter to return to the main menu..."
+    show_menu
 }
 
 function uninstall_bot() {
-    echo -e "\e[1;31m⚠️ WARNING: This will completely delete the bot and configurations!\e[0m"
-    read -p "Are you absolutely sure you want to proceed? (y/n): " CONFIRM
-    
-    if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
-        print_msg "Stopping and disabling background service..."
-        sudo systemctl stop $SERVICE_NAME 2>/dev/null
-        sudo systemctl disable $SERVICE_NAME 2>/dev/null
-        sudo rm -f $SERVICE_FILE
-        sudo systemctl daemon-reload
-        
-        print_msg "Wiping all bot files..."
-        sudo rm -rf $BOT_DIR
-        
-        print_msg "Uninstallation complete. All files removed."
+    clear
+    echo -e "${RED}⚠️ Are you sure you want to UNINSTALL the bot service? (y/n): ${NC}"
+    read confirm
+    if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+        echo -e "${YELLOW}Removing system service...${NC}"
+        systemctl stop ${SERVICE_NAME} 2>/dev/null
+        systemctl disable ${SERVICE_NAME} 2>/dev/null
+        rm -f /etc/systemd/system/${SERVICE_NAME}.service
+        systemctl daemon-reload
+        echo -e "${GREEN}✅ Bot service has been stopped and removed.${NC}"
+        echo -e "${YELLOW}Note: Your main directory (${WORK_DIR}) and database were NOT deleted to prevent data loss.${NC}"
     else
-        print_msg "Uninstallation aborted."
+        echo -e "${GREEN}Operation canceled.${NC}"
     fi
-    read -p "Press Enter to return to the menu..."
-}
-# ==========================================
-# Main Menu Loop
-# ==========================================
-while true; do
-    show_banner
-    echo -e "\e[1;37mPlease select an option:\e[0m"
-    echo "  1) Install Bot"
-    echo "  2) Stop Bot"
-    echo "  3) Restart Bot"
-    echo "  4) Uninstall Bot"
-    echo "  5) Exit"
     echo ""
-    read -p "Option (1-5): " OPTION
+    read -p "Press Enter to return to the main menu..."
+    show_menu
+}
 
-    case $OPTION in
-        1) install_bot ;;
-        2) stop_bot ;;
-        3) restart_bot ;;
-        4) uninstall_bot ;;
-        5) clear; exit 0 ;;
-        *) print_err "Invalid option!"; sleep 1 ;;
-    esac
-done
-
+# Execute main menu
+show_menu
