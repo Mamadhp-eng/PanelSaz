@@ -17,6 +17,7 @@
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main/install.sh)
+```
 
 <p align="center">
   <img src="install.png" alt="PanelSaz Installer Menu" width="600">
