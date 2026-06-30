@@ -16,7 +16,7 @@ VERSION="1.0.16"
 REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
-FILE_NAME="client_bot.bin"
+FILE_NAME="client_bot" # نام فایل باینری در گیت هاب
 
 # ==========================================
 # Check Root
@@ -93,15 +93,18 @@ function install_bot() {
     mkdir -p $WORK_DIR
     cd $WORK_DIR
     
-    echo -e "${YELLOW}Installing required system packages...${NC}"
+    echo -e "${YELLOW}Installing basic system utilities...${NC}"
     apt update -y
-    apt install python3 python3-pip curl wget unzip sqlite3 -y
+    # پایتون و pip حذف شدند زیرا فایل ما اکنون باینری مستقل است.
+    # نصب sqlite3 برای مواقعی که ادمین بخواهد مستقیما دیتابیس را بررسی کند نگه داشته شد.
+    apt install curl wget unzip sqlite3 -y
     
-    echo -e "${YELLOW}Downloading bot files from GitHub...${NC}"
-    curl -Ls "$REPO_URL/$FILE_NAME" | sed 's/\r$//' > $FILE_NAME
+    echo -e "${YELLOW}Downloading binary bot file from GitHub...${NC}"
+    # استفاده از فلگ -o به جای pipe کردن به sed تا فایل باینری خراب نشود
+    curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
+    
+    # دادن پرمیشن اجرایی به باینری دانلود شده
     chmod +x $FILE_NAME
-    echo -e "${YELLOW}Installing Python dependencies...${NC}"
-    pip3 install pyTelegramBotAPI requests pyjwt cryptography --break-system-packages
 
     echo -e "${YELLOW}Generating Initial Config...${NC}"
     cat <<EOF > config.json
@@ -182,11 +185,10 @@ function update_bot() {
         echo -e "${YELLOW}Stopping bot service...${NC}"
         systemctl stop ${SERVICE_NAME} 2>/dev/null
         
-        echo -e "${YELLOW}Fetching latest code...${NC}"
-        curl -Ls "$REPO_URL/$FILE_NAME" | sed 's/\r$//' > $FILE_NAME
-        
-        echo -e "${YELLOW}Installing new dependencies...${NC}"
-        pip3 install pyTelegramBotAPI requests pyjwt cryptography --break-system-packages
+        echo -e "${YELLOW}Fetching latest binary...${NC}"
+        # اصلاح دانلود در آپدیت
+        curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
+        chmod +x $FILE_NAME
 
         echo -e "${YELLOW}Restarting bot...${NC}"
         systemctl daemon-reload
