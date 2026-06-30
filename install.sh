@@ -16,7 +16,7 @@ VERSION="1.0.16"
 REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
-FILE_NAME="client_bot.py"
+FILE_NAME="client_bot"
 
 # ==========================================
 # Check Root
@@ -145,7 +145,7 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory=${WORK_DIR}
-ExecStart=/usr/bin/python3 ${WORK_DIR}/${FILE_NAME}
+ExecStart=${WORK_DIR}/${FILE_NAME}
 Restart=always
 RestartSec=5
 
