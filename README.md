@@ -16,4 +16,4 @@
 برای نصب ربات روی سرور (اوبونتو / دبیان)، نیازی به دانش فنی پیچیده نیست. فقط کافیست دستور زیر را کپی کرده و در ترمینال سرور خود اجرا کنید:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mamadhp-eng/PanelSaz/main/install.sh | sed 's/\r$//')
+bash <(curl -Ls https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main/install.sh)
