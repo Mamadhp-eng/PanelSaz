@@ -16,7 +16,7 @@ VERSION="1.0.16"
 REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
-FILE_NAME="client_bot"
+FILE_NAME="client_bot.bin"
 
 # ==========================================
 # Check Root
@@ -99,7 +99,7 @@ function install_bot() {
     
     echo -e "${YELLOW}Downloading bot files from GitHub...${NC}"
     curl -Ls "$REPO_URL/$FILE_NAME" | sed 's/\r$//' > $FILE_NAME
-    
+    chmod +x $FILE_NAME
     echo -e "${YELLOW}Installing Python dependencies...${NC}"
     pip3 install pyTelegramBotAPI requests pyjwt cryptography --break-system-packages
 
