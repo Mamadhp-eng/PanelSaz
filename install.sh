@@ -12,11 +12,11 @@ NC="\033[0m"
 # ==========================================
 # Variables
 # ==========================================
-VERSION="1.0.16"
+VERSION="1.0.17"
 REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
-FILE_NAME="client_bot" # نام فایل باینری در گیت هاب
+FILE_NAME="client_bot.bin" # نام دقیق فایل باینری آپلود شده در گیت‌هاب
 
 # ==========================================
 # Check Root
@@ -95,12 +95,9 @@ function install_bot() {
     
     echo -e "${YELLOW}Installing basic system utilities...${NC}"
     apt update -y
-    # پایتون و pip حذف شدند زیرا فایل ما اکنون باینری مستقل است.
-    # نصب sqlite3 برای مواقعی که ادمین بخواهد مستقیما دیتابیس را بررسی کند نگه داشته شد.
     apt install curl wget unzip sqlite3 -y
     
     echo -e "${YELLOW}Downloading binary bot file from GitHub...${NC}"
-    # استفاده از فلگ -o به جای pipe کردن به sed تا فایل باینری خراب نشود
     curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
     
     # دادن پرمیشن اجرایی به باینری دانلود شده
@@ -126,6 +123,9 @@ function install_bot() {
     "test_group_id": 2,
     "min_deposit": 50000,
     "payg_price_per_gb": 3000,
+    "fixed_price_per_gb": 3000,
+    "payg_limit_per_user": 1,
+    "low_balance_threshold": 100000,
     "faq_text": "",
     "force_channel": "",
     "license_key": "",
@@ -135,7 +135,10 @@ function install_bot() {
     "btn_buy_license": "🔑 خرید لایسنس ربات",
     "btn_test_config": "🎁 دریافت کانفیگ تست",
     "btn_faq": "❓ سوالات متداول",
-    "btn_support": "🎧 ارتباط با پشتیبانی"
+    "btn_support": "🎧 ارتباط با پشتیبانی",
+    "btn_payg": "⚖️ پرداخت در ازای مصرف",
+    "btn_fixed_plans": "📦 پنل‌های ثابت",
+    "welcome_message": "👋 به ربات پاسارگاد خوش آمدید."
 }
 EOF
 
@@ -186,7 +189,6 @@ function update_bot() {
         systemctl stop ${SERVICE_NAME} 2>/dev/null
         
         echo -e "${YELLOW}Fetching latest binary...${NC}"
-        # اصلاح دانلود در آپدیت
         curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
         chmod +x $FILE_NAME
 
@@ -239,3 +241,4 @@ function uninstall_bot() {
 
 # Execute
 show_menu
+
