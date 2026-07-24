@@ -13,10 +13,12 @@ NC="\033[0m"
 # Variables
 # ==========================================
 VERSION="1.0.17"
-REPO_URL="https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
 FILE_NAME="client_bot.bin" # نام دقیق فایل باینری آپلود شده در گیت‌هاب
+
+# لینک دانلود مستقیم همیشه آخرین نسخه از بخش Releases گیت‌هاب شما را می‌گیرد
+DOWNLOAD_URL="https://github.com/Mamadhp-eng/PanelSaz/releases/latest/download/$FILE_NAME"
 
 # ==========================================
 # Check Root
@@ -97,8 +99,14 @@ function install_bot() {
     apt update -y
     apt install curl wget unzip sqlite3 -y
     
-    echo -e "${YELLOW}Downloading binary bot file from GitHub...${NC}"
-    curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
+    echo -e "${YELLOW}Downloading binary bot file from GitHub Releases...${NC}"
+    curl -L "$DOWNLOAD_URL" -o $FILE_NAME
+    
+    # بررسی موفقیت آمیز بودن دانلود
+    if [ ! -f "$FILE_NAME" ]; then
+        echo -e "${RED}❌ Download failed! Please check GitHub releases.${NC}"
+        exit 1
+    fi
     
     # دادن پرمیشن اجرایی به باینری دانلود شده
     chmod +x $FILE_NAME
@@ -189,7 +197,8 @@ function update_bot() {
         systemctl stop ${SERVICE_NAME} 2>/dev/null
         
         echo -e "${YELLOW}Fetching latest binary...${NC}"
-        curl -L "$REPO_URL/$FILE_NAME" -o $FILE_NAME
+        rm -f $FILE_NAME
+        curl -L "$DOWNLOAD_URL" -o $FILE_NAME
         chmod +x $FILE_NAME
 
         echo -e "${YELLOW}Restarting bot...${NC}"
@@ -241,4 +250,3 @@ function uninstall_bot() {
 
 # Execute
 show_menu
-
