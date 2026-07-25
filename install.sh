@@ -12,7 +12,7 @@ NC="\033[0m"
 # ==========================================
 # Variables
 # ==========================================
-VERSION="1.0.17"
+VERSION="1.1.6"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
 FILE_NAME="client_bot.bin" # نام دقیق فایل باینری آپلود شده در گیت‌هاب
