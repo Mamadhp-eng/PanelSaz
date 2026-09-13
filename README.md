@@ -25,5 +25,5 @@ bash <(curl -Ls https://raw.githubusercontent.com/Mamadhp-eng/PanelSaz/main/inst
 </p>
 
 <p align="center">
-  <img src="main.png" alt="PanelSaz Installer Menu" width="600">
+  <img src="main.jpg" alt="PanelSaz Installer Menu" width="600">
 </p>
