@@ -15,7 +15,7 @@ NC="\033[0m"
 VERSION="2.2"
 WORK_DIR="/root/client_bot"
 SERVICE_NAME="client_bot"
-FILE_NAME="client_bot.bin" # نام دقیق فایل باینری آپلود شده در گیت‌هاب
+FILE_NAME="client_bot" # نام دقیق فایل باینری آپلود شده در گیت‌هاب
 
 # لینک دانلود مستقیم همیشه آخرین نسخه از بخش Releases گیت‌هاب شما را می‌گیرد
 DOWNLOAD_URL="https://github.com/Mamadhp-eng/PanelSaz/releases/latest/download/$FILE_NAME"
